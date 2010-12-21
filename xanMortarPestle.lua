@@ -1,3 +1,4 @@
+--A very special thanks to P3lim for Molinari for the inspiration and Blightdavid for his work on Prospect Easy.
 
 local spells = {}
 local setInCombat = 0
