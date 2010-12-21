@@ -1,0 +1,8 @@
+## Interface: 40000
+## Title: xanMortarPestle
+## Notes: Mill/Prospect/Disenchant using (Alt + Right-Click) on an item.
+## Author: Xruptor
+## Version: 1.0
+
+xanMortarPestle.lua
+itemDB.lua
