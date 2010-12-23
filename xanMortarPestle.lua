@@ -44,7 +44,7 @@ local button = CreateFrame("Button", "xMP_ButtonFrame", UIParent, "SecureActionB
 button:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
 button:RegisterEvent('MODIFIER_STATE_CHANGED')
 
-button:SetAttribute('alt-type1', 'macro')
+button:SetAttribute('ctrl-shift-type1', 'macro')
 button:RegisterForClicks("LeftButtonUp")
 button:RegisterForDrag("LeftButton")
 button:SetFrameStrata("DIALOG")
@@ -69,11 +69,10 @@ button:Hide()
 
 function button:MODIFIER_STATE_CHANGED(event, modi)
 	if not modi then return end
-	if modi ~= 'LALT' or modi ~= 'RALT' then return end
 	if not self:IsShown() then return end
 	
 	--clear the auto shine if alt key has been released
-	if not IsAltKeyDown() and not InCombatLockdown() then
+	if not IsControlKeyDown() and not IsShiftKeyDown() and not InCombatLockdown() then
 		AutoCastShine_AutoCastStop(self)
 		self:Hide()
 	elseif InCombatLockdown() then
@@ -125,7 +124,7 @@ function frm:PLAYER_LOGIN()
 		local item, link = self:GetItem()
 		lastItem = link
 		
-		if(item and link and not InCombatLockdown() and IsAltKeyDown() and not CursorHasItem()) then
+		if(item and link and not InCombatLockdown() and IsControlKeyDown() and IsShiftKeyDown() and not CursorHasItem() and not IsEquippedItem(link)) then
 
 			local id = type(link) == "number" and link or select(3, link:find("item:(%d+):"))
 			id = tonumber(id)
@@ -143,15 +142,18 @@ function frm:PLAYER_LOGIN()
 				local bag = owner:GetParent():GetID()
 				local slot = owner:GetID()
 				
-				--set the item for disenchant check
-				lastItem = link
-				
-				button:SetAttribute('macrotext', string.format('/cast %s\n/use %s %s', spells[spellID], bag, slot))
-				button:SetAllPoints(owner)
-				button:SetAlpha(1)
-				button:Show()
-				
-				AutoCastShine_AutoCastStart(button, colors[spellID].r, colors[spellID].g, colors[spellID].b)
+				--double tripple check this is not an equipped item, would suck if we disenchanted an item we have equipped
+				if owner:GetParent():GetName() and owner:GetParent():GetName() ~= "PaperDollItemsFrame" then
+					--set the item for disenchant check
+					lastItem = link
+
+					button:SetAttribute('macrotext', string.format('/cast %s\n/use %s %s', spells[spellID], bag, slot))
+					button:SetAllPoints(owner)
+					button:SetAlpha(1)
+					button:Show()
+					
+					AutoCastShine_AutoCastStart(button, colors[spellID].r, colors[spellID].g, colors[spellID].b)
+				end
 			else
 				button:Hide()
 			end
