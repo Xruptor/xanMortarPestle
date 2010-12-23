@@ -2,7 +2,7 @@
 
 local spells = {}
 local setInCombat = 0
-local lastItem = ""
+local lastItem
 
 local colors = {
 	[51005] = {r=181/255, g=230/255, b=29/255},	--milling
@@ -122,6 +122,7 @@ function frm:PLAYER_LOGIN()
 
 	GameTooltip:HookScript('OnTooltipSetItem', function(self)
 		local item, link = self:GetItem()
+		--reset if no item (link will be nil)
 		lastItem = link
 		
 		if(item and link and not InCombatLockdown() and IsControlKeyDown() and IsShiftKeyDown() and not CursorHasItem() and not IsEquippedItem(link)) then
@@ -197,7 +198,7 @@ local originalOnEvent = UIErrorsFrame:GetScript("OnEvent")
 UIErrorsFrame:SetScript("OnEvent", function(self, event, msg, r, g, b, ...)
 	if event ~= "SYSMSG" then
 		--it's not a system message so lets grab it and compare with non-disenchant
-		if msg == SPELL_FAILED_CANT_BE_DISENCHANTED and XMP_DB and button:IsShown() and lastItem and lastItem ~= "" then
+		if msg == SPELL_FAILED_CANT_BE_DISENCHANTED and XMP_DB and button:IsShown() and lastItem then
 			--get the id from the previously stored link
 			local id = type(lastItem) == "number" and lastItem or select(3, lastItem:find("item:(%d+):"))
 			id = tonumber(id)
