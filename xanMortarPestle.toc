@@ -2,7 +2,7 @@
 ## Title: xanMortarPestle
 ## Notes: Mill/Prospect/Disenchant using (Alt + Right-Click) on an item.
 ## Author: Xruptor
-## Version: 1.0
+## Version: 1.2
 
 xanMortarPestle.lua
 itemDB.lua

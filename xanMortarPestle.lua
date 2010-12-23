@@ -1,7 +1,13 @@
---A very special thanks to P3lim for Molinari for the inspiration and Blightdavid for his work on Prospect Easy.
+--A very special thanks to P3lim (Molinari) for the inspiration behind the AutoShine and Blightdavid for his work on Prospect Easy.
 
 local spells = {}
 local setInCombat = 0
+
+local colors {
+	[51005] = {r=181/255, g=230/255, b=29/255},	--milling
+	[31252] = {r=1, g=127/255, b=138/255},  	--prospecting
+	[13262] = {r=128/255, g=128/255, b=1},   	--disenchant
+}
 
 --[[------------------------
 	LOCALIZATION
@@ -62,7 +68,7 @@ button:Hide()
 
 function button:MODIFIER_STATE_CHANGED(event, modi)
 	if not modi then return end
-	if not modi == 'LALT' or modi == 'RALT' then return end
+	if modi ~= 'LALT' or modi ~= 'RALT' then return end
 	if not self:IsShown() then return end
 	
 	--clear the auto shine if alt key has been released
@@ -79,7 +85,9 @@ function button:PLAYER_REGEN_ENABLED()
 	checkCombat(self, true)
 end
 
---set the sparkles otherwise it will throw an exception
+--AutoCastShineTemplate
+--set the sparkles otherwise it will throw an error
+--increase the sparkles a bit for clarity
 for _, sparks in pairs(button.sparkles) do
 	sparks:SetHeight(sparks:GetHeight() * 3)
 	sparks:SetWidth(sparks:GetWidth() * 3)
@@ -120,21 +128,21 @@ function frm:PLAYER_LOGIN()
 			if not xMPDB then return end
 		
 			local _, _, qual, itemLevel, _, itemType = GetItemInfo(link)
-			local color, spell = processCheck(id, itemType, qual)
+			local spellID = processCheck(id, itemType, qual)
 			
 			--check to show or hide the button
-			if color and spell then
+			if spellID then
 			
 				local owner = self:GetOwner() --get the owner of the tooltip
 				local bag = owner:GetParent():GetID()
 				local slot = owner:GetID()
 
-				button:SetAttribute('macrotext', string.format('/cast %s\n/use %s %s', spell, bag, slot))
+				button:SetAttribute('macrotext', string.format('/cast %s\n/use %s %s', spells[spellID], bag, slot))
 				button:SetAllPoints(owner)
 				button:SetAlpha(1)
 				button:Show()
 				
-				AutoCastShine_AutoCastStart(button, color.r, color.g, color.b)
+				AutoCastShine_AutoCastStart(button, colors[spellID].r, colors[spellID].g, colors[spellID].b)
 			else
 				button:Hide()
 			end
@@ -150,19 +158,19 @@ function processCheck(id, itemType, qual)
 
 	--first check milling
 	if spells[51005] and xMPDB.herbs[id] then
-		return {r=181/255, g=230/255, b=29/255}, spells[51005]
+		return 51005
 	end
 	
 	--second checking prospecting
 	if spells[31252] and xMPDB.ore[id] then
-		return {r=1, g=127/255, b=138/255}, spells[31252]
+		return 31252
 	end
 	
 	--otherwise check disenchat
 	if spells[13262] and itemType and qual then
 		--only allow if the type of item is a weapon or armor, and it's a specific quality
 		if (itemType == ARMOR or itemType == L.Weapon) and qual > 1 and qual < 5 then
-			return {r=128/255, g=128/255, b=1}, spells[13262]
+			return 13262
 		end
 	end
 	
