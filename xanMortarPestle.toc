@@ -3,6 +3,7 @@
 ## Notes: Mill/Prospect/Disenchant using (Alt + Right-Click) on an item.
 ## Author: Xruptor
 ## Version: 1.2
+## SavedVariables: XMP_DB
 
 xanMortarPestle.lua
 itemDB.lua

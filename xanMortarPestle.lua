@@ -2,8 +2,9 @@
 
 local spells = {}
 local setInCombat = 0
+local lastItem = ""
 
-local colors {
+local colors = {
 	[51005] = {r=181/255, g=230/255, b=29/255},	--milling
 	[31252] = {r=1, g=127/255, b=138/255},  	--prospecting
 	[13262] = {r=128/255, g=128/255, b=1},   	--disenchant
@@ -102,6 +103,9 @@ frm:SetScript("OnEvent", function(self, event, ...) if self[event] then return s
 
 function frm:PLAYER_LOGIN()
 	
+	--check for DB
+	if not XMP_DB then XMP_DB = {} end
+	
 	--milling
 	if(IsSpellKnown(51005)) then
 		spells[51005] = GetSpellInfo(51005)
@@ -119,6 +123,8 @@ function frm:PLAYER_LOGIN()
 
 	GameTooltip:HookScript('OnTooltipSetItem', function(self)
 		local item, link = self:GetItem()
+		lastItem = link
+		
 		if(item and link and not InCombatLockdown() and IsAltKeyDown() and not CursorHasItem()) then
 
 			local id = type(link) == "number" and link or select(3, link:find("item:(%d+):"))
@@ -128,7 +134,7 @@ function frm:PLAYER_LOGIN()
 			if not xMPDB then return end
 		
 			local _, _, qual, itemLevel, _, itemType = GetItemInfo(link)
-			local spellID = processCheck(id, itemType, qual)
+			local spellID = processCheck(id, itemType, qual, link)
 			
 			--check to show or hide the button
 			if spellID then
@@ -136,7 +142,10 @@ function frm:PLAYER_LOGIN()
 				local owner = self:GetOwner() --get the owner of the tooltip
 				local bag = owner:GetParent():GetID()
 				local slot = owner:GetID()
-
+				
+				--set the item for disenchant check
+				lastItem = link
+				
 				button:SetAttribute('macrotext', string.format('/cast %s\n/use %s %s', spells[spellID], bag, slot))
 				button:SetAllPoints(owner)
 				button:SetAlpha(1)
@@ -153,7 +162,7 @@ function frm:PLAYER_LOGIN()
 	self.PLAYER_LOGIN = nil
 end
 
-function processCheck(id, itemType, qual)
+function processCheck(id, itemType, qual, link)
 	if not spells then return nil end
 
 	--first check milling
@@ -167,14 +176,37 @@ function processCheck(id, itemType, qual)
 	end
 	
 	--otherwise check disenchat
-	if spells[13262] and itemType and qual then
+	if spells[13262] and itemType and qual and XMP_DB then
 		--only allow if the type of item is a weapon or armor, and it's a specific quality
-		if (itemType == ARMOR or itemType == L.Weapon) and qual > 1 and qual < 5 then
+		if (itemType == ARMOR or itemType == L.Weapon) and qual > 1 and qual < 5 and IsEquippableItem(link) and not XMP_DB[id] then
 			return 13262
 		end
 	end
 	
 	return nil
 end
+
+--instead of having a large array with all the possible non-disenchant items
+--I decided to go another way around this.  Whenever a user tries to disenchant an item that can't be disenchanted
+--it learns the item into a database.  That way in the future the user will not be able to disenchant it.
+--A one time warning will be displayed for the user ;)
+
+local originalOnEvent = UIErrorsFrame:GetScript("OnEvent")
+UIErrorsFrame:SetScript("OnEvent", function(self, event, msg, r, g, b, ...)
+	if event ~= "SYSMSG" then
+		--it's not a system message so lets grab it and compare with non-disenchant
+		if msg == SPELL_FAILED_CANT_BE_DISENCHANTED and XMP_DB and button:IsShown() and lastItem and lastItem ~= "" then
+			--get the id from the previously stored link
+			local id = type(lastItem) == "number" and lastItem or select(3, lastItem:find("item:(%d+):"))
+			id = tonumber(id)
+			--check to see if it's already in the database, if it isn't then add it to the DE list.
+			if id and not XMP_DB[id] then
+				XMP_DB[id] = true
+				DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33xanMortarPestle|r: %s added to database. %s", lastItem, SPELL_FAILED_CANT_BE_DISENCHANTED))
+			end
+		end
+	end
+	return originalOnEvent(self, event, msg, r, g, b, ...)
+end)
 
 if IsLoggedIn() then frm:PLAYER_LOGIN() else frm:RegisterEvent("PLAYER_LOGIN") end
