@@ -44,7 +44,7 @@ local button = CreateFrame("Button", "xMP_ButtonFrame", UIParent, "SecureActionB
 button:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
 button:RegisterEvent('MODIFIER_STATE_CHANGED')
 
-button:SetAttribute('ctrl-shift-type1', 'macro')
+button:SetAttribute('alt-type1', 'macro')
 button:RegisterForClicks("LeftButtonUp")
 button:RegisterForDrag("LeftButton")
 button:SetFrameStrata("DIALOG")
@@ -54,26 +54,28 @@ button:SetAttribute("_onleave", "self:ClearAllPoints() self:SetAlpha(0) self:Hid
 
 button:HookScript("OnLeave", function(self)
 	AutoCastShine_AutoCastStop(self)
-	if InCombatLockdown() then checkCombat(self) else self:Hide() end --prevent combat errors
+	if InCombatLockdown() then checkCombat(self) else self:ClearAllPoints() self:Hide() end --prevent combat errors
 end)
 
 button:HookScript("OnReceiveDrag", function(self)
 	AutoCastShine_AutoCastStop(self)
-	if InCombatLockdown() then checkCombat(self) else self:Hide() end --prevent combat errors
+	if InCombatLockdown() then checkCombat(self) else self:ClearAllPoints() self:Hide() end --prevent combat errors
 end)
 button:HookScript("OnDragStop", function(self, button)
 	AutoCastShine_AutoCastStop(self)
-	if InCombatLockdown() then checkCombat(self) else self:Hide() end --prevent combat errors
+	if InCombatLockdown() then checkCombat(self) else self:ClearAllPoints() self:Hide() end --prevent combat errors
 end)
 button:Hide()
 
 function button:MODIFIER_STATE_CHANGED(event, modi)
 	if not modi then return end
+	if modi ~= "LALT" or modi ~= "RALT" then return end
 	if not self:IsShown() then return end
 	
 	--clear the auto shine if alt key has been released
-	if not IsControlKeyDown() and not IsShiftKeyDown() and not InCombatLockdown() then
+	if not IsAltKeyDown() and not InCombatLockdown() then
 		AutoCastShine_AutoCastStop(self)
+		self:ClearAllPoints()
 		self:Hide()
 	elseif InCombatLockdown() then
 		checkCombat(self)
@@ -92,6 +94,15 @@ for _, sparks in pairs(button.sparkles) do
 	sparks:SetHeight(sparks:GetHeight() * 3)
 	sparks:SetWidth(sparks:GetWidth() * 3)
 end
+
+--if the lootframe is showing then disable everything
+LootFrame:HookScript("OnShow", function(self)
+	if button:IsShown() and not InCombatLockdown() then
+		AutoCastShine_AutoCastStop(button)
+		button:ClearAllPoints()
+		button:Hide()
+	end
+end)
 
 --[[------------------------
 	CORE
@@ -121,12 +132,26 @@ function frm:PLAYER_LOGIN()
 	end
 
 	GameTooltip:HookScript('OnTooltipSetItem', function(self)
+		--do some checks before we do anything
+		if InCombatLockdown() then return end	--if were in combat then exit
+		if not IsAltKeyDown() then return end	--if the modifier is not down then exit
+		if CursorHasItem() then return end	--if the mouse has an item then exit
+	
 		local item, link = self:GetItem()
+		
 		--reset if no item (link will be nil)
 		lastItem = link
 		
-		if(item and link and not InCombatLockdown() and IsControlKeyDown() and IsShiftKeyDown() and not CursorHasItem() and not IsEquippedItem(link)) then
+		--make sure we have an item, it's not an equipped one, and the darn lootframe isn't showing
+		if item and link and not IsEquippedItem(link) and not LootFrame:IsShown() then
 
+			local owner = self:GetOwner() --get the owner of the tooltip
+			local bag = owner:GetParent():GetID()
+			local slot = owner:GetID()
+			
+			--if it's the character frames <alt> equipment switch then ignore it
+			if owner and owner:GetName() and strfind(owner:GetName(), "PaperDollFrame") then return end
+		
 			local id = type(link) == "number" and link or select(3, link:find("item:(%d+):"))
 			id = tonumber(id)
 			
@@ -139,25 +164,20 @@ function frm:PLAYER_LOGIN()
 			--check to show or hide the button
 			if spellID then
 			
-				local owner = self:GetOwner() --get the owner of the tooltip
-				local bag = owner:GetParent():GetID()
-				local slot = owner:GetID()
-				
-				--double tripple check this is not an equipped item, would suck if we disenchanted an item we have equipped
-				if owner:GetParent():GetName() and owner:GetParent():GetName() ~= "PaperDollItemsFrame" then
-					--set the item for disenchant check
-					lastItem = link
+				--set the item for disenchant check
+				lastItem = link
 
-					button:SetAttribute('macrotext', string.format('/cast %s\n/use %s %s', spells[spellID], bag, slot))
-					button:SetAllPoints(owner)
-					button:SetAlpha(1)
-					button:Show()
-					
-					AutoCastShine_AutoCastStart(button, colors[spellID].r, colors[spellID].g, colors[spellID].b)
-				end
+				button:SetAttribute('macrotext', string.format('/cast %s\n/use %s %s', spells[spellID], bag, slot))
+				button:SetAllPoints(owner)
+				button:SetAlpha(1)
+				button:Show()
+				
+				AutoCastShine_AutoCastStart(button, colors[spellID].r, colors[spellID].g, colors[spellID].b)
 			else
+				button:ClearAllPoints()
 				button:Hide()
 			end
+			
 		end
 	end)
 	
@@ -169,17 +189,17 @@ function processCheck(id, itemType, qual, link)
 	if not spells then return nil end
 
 	--first check milling
-	if spells[51005] and xMPDB.herbs[id] then
+	if xMPDB.herbs[id] and spells[51005] then
 		return 51005
 	end
 	
 	--second checking prospecting
-	if spells[31252] and xMPDB.ore[id] then
+	if xMPDB.ore[id] and spells[31252] then
 		return 31252
 	end
 	
 	--otherwise check disenchat
-	if spells[13262] and itemType and qual and XMP_DB then
+	if itemType and qual and XMP_DB and spells[13262] then
 		--only allow if the type of item is a weapon or armor, and it's a specific quality
 		if (itemType == ARMOR or itemType == L.Weapon) and qual > 1 and qual < 5 and IsEquippableItem(link) and not XMP_DB[id] then
 			return 13262
