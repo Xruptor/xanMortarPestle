@@ -8,6 +8,7 @@ local colors = {
 	[51005] = {r=181/255, g=230/255, b=29/255},	--milling
 	[31252] = {r=1, g=127/255, b=138/255},  	--prospecting
 	[13262] = {r=128/255, g=128/255, b=1},   	--disenchant
+    [1804] = {r=200/255, g=75/255, b=75/255},       --lock picking  (Thanks to kaisoul)
 }
 
 --[[------------------------
@@ -131,6 +132,11 @@ function frm:PLAYER_LOGIN()
 		spells[13262] = GetSpellInfo(13262)
 	end
 
+	--lock picking (thanks to Kaisoul)
+	if(IsSpellKnown(1804)) then
+		spells[1804] = GetSpellInfo(1804)
+	end
+	
 	GameTooltip:HookScript('OnTooltipSetItem', function(self)
 		--do some checks before we do anything
 		if InCombatLockdown() then return end	--if were in combat then exit
@@ -196,6 +202,11 @@ function processCheck(id, itemType, qual, link)
 	--second checking prospecting
 	if xMPDB.ore[id] and spells[31252] then
 		return 31252
+	end
+
+	--third checking lock picking  (thanks to Kailsoul)
+	if xMPDB.lock[id] and spells[1804] then
+		return 1804
 	end
 	
 	--otherwise check disenchat

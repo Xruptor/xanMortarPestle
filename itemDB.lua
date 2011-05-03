@@ -80,3 +80,39 @@ xMPDB.ore = {
 	[52183] = true,
 	[52185] = true,
 }
+
+
+--[[------------------------
+	LOCK
+--------------------------]]
+--Special thanks to kaisoul from WOWinterface.com
+
+xMPDB.lock = {
+	[4632] = true,
+	[4633] = true,
+	[4634] = true,
+	[4636] = true,
+	[4637] = true,
+	[4638] = true,
+	[5758] = true,
+	[5759] = true,
+	[5760] = true,	
+	[6354] = true,	
+	[6355] = true,	
+	[7209] = true,	
+	[6712] = true,
+	[12033] = true,
+	[13875] = true,
+	[16882] = true,
+	[16883] = true,
+	[16884] = true,
+	[16885] = true,			
+	[29569] = true,			
+	[31952] = true,			
+	[43575] = true,
+	[43622] = true,
+	[43624] = true,
+	[45986] = true,
+	[63349] = true,
+	[68729] = true,	
+}
