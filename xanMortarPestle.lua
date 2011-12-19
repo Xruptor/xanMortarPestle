@@ -152,6 +152,7 @@ function frm:PLAYER_LOGIN()
 		--if it's the character frames <alt> equipment switch then ignore it
 		if owner and owner:GetName() and strfind(string.lower(owner:GetName()), "character") and strfind(string.lower(owner:GetName()), "slot") then return end
 		if owner and owner:GetParent() and owner:GetParent():GetName() and strfind(string.lower(owner:GetParent():GetName()), "paperdoll") then return end
+		if owner and owner:GetName() and strfind(string.lower(owner:GetName()), "equipmentflyout") then return end
 		
 		--reset if no item (link will be nil)
 		lastItem = link
