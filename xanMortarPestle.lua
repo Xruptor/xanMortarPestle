@@ -144,19 +144,24 @@ function frm:PLAYER_LOGIN()
 		if CursorHasItem() then return end	--if the mouse has an item then exit
 	
 		local item, link = self:GetItem()
+		--make sure we have an item to work with
+		if not item and not link then return end
+		
+		local owner = self:GetOwner() --get the owner of the tooltip
+
+		--if it's the character frames <alt> equipment switch then ignore it
+		if owner and owner:GetName() and strfind(string.lower(owner:GetName()), "character") and strfind(string.lower(owner:GetName()), "slot") then return end
+		if owner and owner:GetParent() and owner:GetParent():GetName() and strfind(string.lower(owner:GetParent():GetName()), "paperdoll") then return end
 		
 		--reset if no item (link will be nil)
 		lastItem = link
-		
+
 		--make sure we have an item, it's not an equipped one, and the darn lootframe isn't showing
 		if item and link and not IsEquippedItem(link) and not LootFrame:IsShown() then
-
-			local owner = self:GetOwner() --get the owner of the tooltip
+			
+			--get the bag slot info
 			local bag = owner:GetParent():GetID()
 			local slot = owner:GetID()
-			
-			--if it's the character frames <alt> equipment switch then ignore it
-			if owner and owner:GetName() and strfind(owner:GetName(), "PaperDollFrame") then return end
 		
 			local id = type(link) == "number" and link or select(3, link:find("item:(%d+):"))
 			id = tonumber(id)
