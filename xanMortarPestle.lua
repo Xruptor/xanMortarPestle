@@ -48,7 +48,7 @@ button:RegisterEvent('MODIFIER_STATE_CHANGED')
 button:SetAttribute('alt-type1', 'macro')
 button:RegisterForClicks("LeftButtonUp")
 button:RegisterForDrag("LeftButton")
-button:SetFrameStrata("DIALOG")
+button:SetFrameStrata("TOOLTIP")
 
 --secured on leave function to hide the frame when we are in combat
 button:SetAttribute("_onleave", "self:ClearAllPoints() self:SetAlpha(0) self:Hide()") 
@@ -238,7 +238,12 @@ UIErrorsFrame:SetScript("OnEvent", function(self, event, msg, r, g, b, ...)
 		--it's not a system message so lets grab it and compare with non-disenchant
 		if msg == SPELL_FAILED_CANT_BE_DISENCHANTED and XMP_DB and button:IsShown() and lastItem then
 			--get the id from the previously stored link
-			local id = type(lastItem) == "number" and lastItem or select(3, lastItem:find("item:(%d+):"))
+			local id
+			if type(lastItem) == "number" then
+				id = lastItem
+			else
+				id = select(3, lastItem:find("item:(%d+):"))
+			end
 			id = tonumber(id)
 			--check to see if it's already in the database, if it isn't then add it to the DE list.
 			if id and not XMP_DB[id] then
