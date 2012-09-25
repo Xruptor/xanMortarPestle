@@ -143,6 +143,7 @@ function frm:PLAYER_LOGIN()
 		if not IsAltKeyDown() then return end	--if the modifier is not down then exit
 		if CursorHasItem() then return end	--if the mouse has an item then exit
 		if MailFrame:IsVisible() then return end --don't continue if the mailbox is open.  For addons such as Postal.
+		if AuctionFrame and AuctionFrame:IsShown() then return end --dont enable if were at the auction house
 	
 		local item, link = self:GetItem()
 		--make sure we have an item to work with
