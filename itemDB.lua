@@ -59,6 +59,13 @@ xMPDB.herbs = {
 	[52986] = true,
 	[52987] = true,
 	[52988] = true,
+	--MOP
+	[72234] = true, -- Green Tea Leaf
+	[72235] = true, -- Silkweed
+	[72237] = true, -- Rain Poppy
+	[72238] = true, -- Golden Lotus
+	[79010] = true, -- Snow Lily
+	[79011] = true, -- Fool's Cap
 }
 
 --[[------------------------
@@ -79,6 +86,10 @@ xMPDB.ore = {
 	[53038] = true,
 	[52183] = true,
 	[52185] = true,
+	--MOP
+	[72092] = true, -- Ghost Iron Ore
+	[72103] = true, -- White Trillium Ore
+	[72094] = true, -- Black Trillium Ore
 }
 
 
