@@ -90,6 +90,7 @@ xMPDB.ore = {
 	[72092] = true, -- Ghost Iron Ore
 	[72103] = true, -- White Trillium Ore
 	[72094] = true, -- Black Trillium Ore
+	[72093] = true, -- Kyparite Ore
 }
 
 
