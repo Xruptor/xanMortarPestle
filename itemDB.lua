@@ -66,6 +66,7 @@ xMPDB.herbs = {
 	[72238] = true, -- Golden Lotus
 	[79010] = true, -- Snow Lily
 	[79011] = true, -- Fool's Cap
+	[89639] = true, -- Desecrated Herb
 }
 
 --[[------------------------
@@ -126,5 +127,7 @@ xMPDB.lock = {
 	[43624] = true,
 	[45986] = true,
 	[63349] = true,
-	[68729] = true,	
+	[68729] = true, --Elementium Lockbox
+	[88165] = true, --vine-cracked junkbox (MOP)
+	[88567] = true, --ghost iron box
 }

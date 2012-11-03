@@ -112,6 +112,24 @@ end)
 local frm = CreateFrame("frame", "xanMortarPestle_Frame", UIParent)
 frm:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
 
+--this update is JUST IN CASE the autoshine is still going even after the alt press is gone
+local TimerOnUpdate = function(self, time)
+
+	if self.active and not IsAltKeyDown() then
+		self.OnUpdateCounter = (self.OnUpdateCounter or 0) + time
+		if self.OnUpdateCounter < 0.5 then return end
+		self.OnUpdateCounter = 0
+
+		self.tick = (self.tick or 0) + 1
+		if self.tick >= 1 then
+			AutoCastShine_AutoCastStop(self)
+			self.active = false
+			self.tick = 0
+			self:SetScript("OnUpdate", nil)
+		end
+	end
+end
+
 function frm:PLAYER_LOGIN()
 	
 	--check for DB
@@ -181,6 +199,9 @@ function frm:PLAYER_LOGIN()
 				--set the item for disenchant check
 				lastItem = link
 
+				button:SetScript("OnUpdate", TimerOnUpdate)
+				button.tick = 0
+				button.active = true
 				button:SetAttribute('macrotext', string.format('/cast %s\n/use %s %s', spells[spellID], bag, slot))
 				button:SetAllPoints(owner)
 				button:SetAlpha(1)
@@ -188,6 +209,9 @@ function frm:PLAYER_LOGIN()
 				
 				AutoCastShine_AutoCastStart(button, colors[spellID].r, colors[spellID].g, colors[spellID].b)
 			else
+				button:SetScript("OnUpdate", nil)
+				button.tick = 0
+				button.active = false
 				button:ClearAllPoints()
 				button:Hide()
 			end
