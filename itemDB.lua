@@ -67,6 +67,13 @@ xMPDB.herbs = {
 	[79010] = true, -- Snow Lily
 	[79011] = true, -- Fool's Cap
 	[89639] = true, -- Desecrated Herb
+	-- Warlords of Draenor
+	[109124] = true, -- Frostweed
+	[109125] = true, -- Fireweed
+	[109126] = true, -- Gorgrond Flytrap
+	[109127] = true, -- Starflower
+	[109128] = true, -- Nagrand Arrowbloom
+	[109129] = true, -- Talador Orchid
 }
 
 --[[------------------------
@@ -92,6 +99,9 @@ xMPDB.ore = {
 	[72103] = true, -- White Trillium Ore
 	[72094] = true, -- Black Trillium Ore
 	[72093] = true, -- Kyparite Ore
+	-- Warlords of Draenor
+	[109119] = true, -- True Iron Ore
+	[109118] = true, -- Blackrock Ore
 }
 
 
@@ -109,19 +119,19 @@ xMPDB.lock = {
 	[4638] = true,
 	[5758] = true,
 	[5759] = true,
-	[5760] = true,	
-	[6354] = true,	
-	[6355] = true,	
-	[7209] = true,	
+	[5760] = true,
+	[6354] = true,
+	[6355] = true,
+	[7209] = true,
 	[6712] = true,
 	[12033] = true,
 	[13875] = true,
 	[16882] = true,
 	[16883] = true,
 	[16884] = true,
-	[16885] = true,			
-	[29569] = true,			
-	[31952] = true,			
+	[16885] = true,
+	[29569] = true,
+	[31952] = true,
 	[43575] = true,
 	[43622] = true,
 	[43624] = true,
@@ -130,4 +140,6 @@ xMPDB.lock = {
 	[68729] = true, --Elementium Lockbox
 	[88165] = true, --vine-cracked junkbox (MOP)
 	[88567] = true, --ghost iron box
+	-- Warlords of Draenor
+	[116920] = true, -- True Steel Lockbox
 }
