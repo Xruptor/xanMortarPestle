@@ -112,6 +112,35 @@ end)
 local frm = CreateFrame("frame", "xanMortarPestle_Frame", UIParent)
 frm:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
 
+local function processCheck(id, itemType, qual, link)
+	if not spells then return nil end
+
+	--first check milling
+	if xMPDB.herbs[id] and spells[51005] then
+		return 51005
+	end
+
+	--second checking prospecting
+	if xMPDB.ore[id] and spells[31252] then
+		return 31252
+	end
+
+	--third checking lock picking  (thanks to Kailsoul)
+	if xMPDB.lock[id] and spells[1804] then
+		return 1804
+	end
+
+	--otherwise check disenchat
+	if itemType and qual and XMP_DB and spells[13262] then
+		--only allow if the type of item is a weapon or armor, and it's a specific quality
+		if (itemType == ARMOR or itemType == L.Weapon) and qual > 1 and qual < 5 and IsEquippableItem(link) and not XMP_DB[id] then
+			return 13262
+		end
+	end
+
+	return nil
+end
+
 --this update is JUST IN CASE the autoshine is still going even after the alt press is gone
 local TimerOnUpdate = function(self, time)
 
@@ -215,41 +244,12 @@ function frm:PLAYER_LOGIN()
 				button:ClearAllPoints()
 				button:Hide()
 			end
-			
+
 		end
 	end)
-	
+
 	self:UnregisterEvent("PLAYER_LOGIN")
 	self.PLAYER_LOGIN = nil
-end
-
-function processCheck(id, itemType, qual, link)
-	if not spells then return nil end
-
-	--first check milling
-	if xMPDB.herbs[id] and spells[51005] then
-		return 51005
-	end
-	
-	--second checking prospecting
-	if xMPDB.ore[id] and spells[31252] then
-		return 31252
-	end
-
-	--third checking lock picking  (thanks to Kailsoul)
-	if xMPDB.lock[id] and spells[1804] then
-		return 1804
-	end
-	
-	--otherwise check disenchat
-	if itemType and qual and XMP_DB and spells[13262] then
-		--only allow if the type of item is a weapon or armor, and it's a specific quality
-		if (itemType == ARMOR or itemType == L.Weapon) and qual > 1 and qual < 5 and IsEquippableItem(link) and not XMP_DB[id] then
-			return 13262
-		end
-	end
-	
-	return nil
 end
 
 --instead of having a large array with all the possible non-disenchant items
