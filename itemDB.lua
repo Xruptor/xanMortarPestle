@@ -107,9 +107,6 @@ xMPDB.ore = {
 	[72103] = true, -- White Trillium Ore
 	[72094] = true, -- Black Trillium Ore
 	[72093] = true, -- Kyparite Ore
-	-- Warlords of Draenor
-	[109119] = true, -- True Iron Ore
-	[109118] = true, -- Blackrock Ore
 	-- Legion
 	[123918] = true, -- Leystone Ore
 	[123919] = true, -- Felslate
