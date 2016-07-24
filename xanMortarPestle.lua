@@ -51,7 +51,7 @@ button:RegisterForDrag("LeftButton")
 button:SetFrameStrata("TOOLTIP")
 
 --secured on leave function to hide the frame when we are in combat
-button:SetAttribute("_onleave", "self:ClearAllPoints() self:SetAlpha(0) self:Hide()") 
+button:SetAttribute("_onleave", "self:ClearAllPoints() self:SetAlpha(0) self:Hide()")
 
 button:HookScript("OnLeave", function(self)
 	AutoCastShine_AutoCastStop(self)
@@ -72,7 +72,7 @@ function button:MODIFIER_STATE_CHANGED(event, modi)
 	if not modi then return end
 	if modi ~= "LALT" or modi ~= "RALT" then return end
 	if not self:IsShown() then return end
-	
+
 	--clear the auto shine if alt key has been released
 	if not IsAltKeyDown() and not InCombatLockdown() then
 		AutoCastShine_AutoCastStop(self)
@@ -112,6 +112,35 @@ end)
 local frm = CreateFrame("frame", "xanMortarPestle_Frame", UIParent)
 frm:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
 
+local function processCheck(id, itemType, qual, link)
+	if not spells then return nil end
+
+	--first check milling
+	if xMPDB.herbs[id] and spells[51005] then
+		return 51005
+	end
+
+	--second checking prospecting
+	if xMPDB.ore[id] and spells[31252] then
+		return 31252
+	end
+
+	--third checking lock picking  (thanks to Kailsoul)
+	if xMPDB.lock[id] and spells[1804] then
+		return 1804
+	end
+
+	--otherwise check disenchat
+	if itemType and qual and XMP_DB and spells[13262] then
+		--only allow if the type of item is a weapon or armor, and it's a specific quality
+		if (itemType == ARMOR or itemType == L.Weapon) and qual > 1 and qual < 5 and IsEquippableItem(link) and not XMP_DB[id] then
+			return 13262
+		end
+	end
+
+	return nil
+end
+
 --this update is JUST IN CASE the autoshine is still going even after the alt press is gone
 local TimerOnUpdate = function(self, time)
 
@@ -131,10 +160,10 @@ local TimerOnUpdate = function(self, time)
 end
 
 function frm:PLAYER_LOGIN()
-	
+
 	--check for DB
 	if not XMP_DB then XMP_DB = {} end
-	
+
 	--milling
 	if(IsSpellKnown(51005)) then
 		spells[51005] = GetSpellInfo(51005)
@@ -144,7 +173,7 @@ function frm:PLAYER_LOGIN()
 	if(IsSpellKnown(31252)) then
 		spells[31252] = GetSpellInfo(31252)
 	end
-	
+
 	--disenchanting
 	if(IsSpellKnown(13262)) then
 		spells[13262] = GetSpellInfo(13262)
@@ -154,7 +183,7 @@ function frm:PLAYER_LOGIN()
 	if(IsSpellKnown(1804)) then
 		spells[1804] = GetSpellInfo(1804)
 	end
-	
+
 	GameTooltip:HookScript('OnTooltipSetItem', function(self)
 		--do some checks before we do anything
 		if InCombatLockdown() then return end	--if were in combat then exit
@@ -162,40 +191,40 @@ function frm:PLAYER_LOGIN()
 		if CursorHasItem() then return end	--if the mouse has an item then exit
 		if MailFrame:IsVisible() then return end --don't continue if the mailbox is open.  For addons such as Postal.
 		if AuctionFrame and AuctionFrame:IsShown() then return end --dont enable if were at the auction house
-	
+
 		local item, link = self:GetItem()
 		--make sure we have an item to work with
 		if not item and not link then return end
-		
+
 		local owner = self:GetOwner() --get the owner of the tooltip
 
 		--if it's the character frames <alt> equipment switch then ignore it
 		if owner and owner:GetName() and strfind(string.lower(owner:GetName()), "character") and strfind(string.lower(owner:GetName()), "slot") then return end
 		if owner and owner:GetParent() and owner:GetParent():GetName() and strfind(string.lower(owner:GetParent():GetName()), "paperdoll") then return end
 		if owner and owner:GetName() and strfind(string.lower(owner:GetName()), "equipmentflyout") then return end
-		
+
 		--reset if no item (link will be nil)
 		lastItem = link
 
 		--make sure we have an item, it's not an equipped one, and the darn lootframe isn't showing
 		if item and link and not IsEquippedItem(link) and not LootFrame:IsShown() then
-			
+
 			--get the bag slot info
 			local bag = owner:GetParent():GetID()
 			local slot = owner:GetID()
-		
+
 			local id = type(link) == "number" and link or select(3, link:find("item:(%d+):"))
 			id = tonumber(id)
-			
+
 			if not id then return end
 			if not xMPDB then return end
-		
+
 			local _, _, qual, itemLevel, _, itemType = GetItemInfo(link)
 			local spellID = processCheck(id, itemType, qual, link)
-			
+
 			--check to show or hide the button
 			if spellID then
-			
+
 				--set the item for disenchant check
 				lastItem = link
 
@@ -206,7 +235,7 @@ function frm:PLAYER_LOGIN()
 				button:SetAllPoints(owner)
 				button:SetAlpha(1)
 				button:Show()
-				
+
 				AutoCastShine_AutoCastStart(button, colors[spellID].r, colors[spellID].g, colors[spellID].b)
 			else
 				button:SetScript("OnUpdate", nil)
@@ -215,41 +244,12 @@ function frm:PLAYER_LOGIN()
 				button:ClearAllPoints()
 				button:Hide()
 			end
-			
+
 		end
 	end)
-	
+
 	self:UnregisterEvent("PLAYER_LOGIN")
 	self.PLAYER_LOGIN = nil
-end
-
-function processCheck(id, itemType, qual, link)
-	if not spells then return nil end
-
-	--first check milling
-	if xMPDB.herbs[id] and spells[51005] then
-		return 51005
-	end
-	
-	--second checking prospecting
-	if xMPDB.ore[id] and spells[31252] then
-		return 31252
-	end
-
-	--third checking lock picking  (thanks to Kailsoul)
-	if xMPDB.lock[id] and spells[1804] then
-		return 1804
-	end
-	
-	--otherwise check disenchat
-	if itemType and qual and XMP_DB and spells[13262] then
-		--only allow if the type of item is a weapon or armor, and it's a specific quality
-		if (itemType == ARMOR or itemType == L.Weapon) and qual > 1 and qual < 5 and IsEquippableItem(link) and not XMP_DB[id] then
-			return 13262
-		end
-	end
-	
-	return nil
 end
 
 --instead of having a large array with all the possible non-disenchant items

@@ -74,6 +74,14 @@ xMPDB.herbs = {
 	[109127] = true, -- Starflower
 	[109128] = true, -- Nagrand Arrowbloom
 	[109129] = true, -- Talador Orchid
+	-- Legion
+	[124101] = true, -- Aethril
+	[124102] = true, -- Dreamleaf
+	[124103] = true, -- Foxflower
+	[124104] = true, -- Fjarnskaggl-waggle-something.
+	[124105] = true, -- Starlight Rose
+	[124106] = true, -- Felwort
+	[128304] = true, -- Yseralline Seed (I guess - these have a Mass Mill spell).
 }
 
 --[[------------------------
@@ -99,9 +107,9 @@ xMPDB.ore = {
 	[72103] = true, -- White Trillium Ore
 	[72094] = true, -- Black Trillium Ore
 	[72093] = true, -- Kyparite Ore
-	-- Warlords of Draenor
-	[109119] = true, -- True Iron Ore
-	[109118] = true, -- Blackrock Ore
+	-- Legion
+	[123918] = true, -- Leystone Ore
+	[123919] = true, -- Felslate
 }
 
 
@@ -142,4 +150,6 @@ xMPDB.lock = {
 	[88567] = true, --ghost iron box
 	-- Warlords of Draenor
 	[116920] = true, -- True Steel Lockbox
+	-- Legion
+	[121331] = true, -- Leystone Lockbox
 }
