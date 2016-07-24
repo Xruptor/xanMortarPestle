@@ -11,6 +11,11 @@ local colors = {
     [1804] = {r=200/255, g=75/255, b=75/255},       --lock picking  (Thanks to kaisoul)
 }
 
+local debugf = tekDebug and tekDebug:GetFrame("xanMortarPestle")
+local function Debug(...)
+    if debugf then debugf:AddMessage(string.join(", ", tostringall(...))) end
+end
+
 --[[------------------------
 	LOCALIZATION
 --------------------------]]
