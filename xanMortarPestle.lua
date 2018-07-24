@@ -117,7 +117,7 @@ end)
 local frm = CreateFrame("frame", "xanMortarPestle_Frame", UIParent)
 frm:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
 
-local function processCheck(id, itemType, qual, link)
+local function processCheck(id, itemType, itemSubType, qual, link)
 	if not spells then return nil end
 
 	--first check milling
@@ -138,7 +138,7 @@ local function processCheck(id, itemType, qual, link)
 	--otherwise check disenchat
 	if itemType and qual and XMP_DB and spells[13262] then
 		--only allow if the type of item is a weapon or armor, and it's a specific quality
-		if (itemType == ARMOR or itemType == L.Weapon) and qual > 1 and qual < 5 and IsEquippableItem(link) and not XMP_DB[id] then
+		if (((itemType == ARMOR or itemType == L.Weapon) and IsEquippableItem(link)) or itemSubType == "Artifact Relic") and qual > 1 and qual < 5 and not XMP_DB[id] then
 			return 13262
 		end
 	end
@@ -224,8 +224,8 @@ function frm:PLAYER_LOGIN()
 			if not id then return end
 			if not xMPDB then return end
 
-			local _, _, qual, itemLevel, _, itemType = GetItemInfo(link)
-			local spellID = processCheck(id, itemType, qual, link)
+			local _, _, qual, itemLevel, _, itemType, itemSubType = GetItemInfo(link)
+			local spellID = processCheck(id, itemType, itemSubType, qual, link)
 
 			--check to show or hide the button
 			if spellID then
