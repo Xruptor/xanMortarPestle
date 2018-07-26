@@ -2,7 +2,7 @@
 ## Title: xanMortarPestle
 ## Notes: Mill/Prospect/Disenchant using (Alt + Right-Click) on an item.
 ## Author: Xruptor
-## Version: 3.0
+## Version: 3.1
 ## OptionalDeps: tekDebug
 ## SavedVariables: XMP_DB
 
