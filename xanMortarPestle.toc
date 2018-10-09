@@ -2,9 +2,16 @@
 ## Title: xanMortarPestle
 ## Notes: Mill/Prospect/Disenchant using (Alt + Right-Click) on an item.
 ## Author: Xruptor
-## Version: 3.1
+## Version: 3.2
+## X-Curse-Project-ID: 28600
+## X-WoWI-ID: 19059
 ## OptionalDeps: tekDebug
 ## SavedVariables: XMP_DB
+
+libs\LibStub\LibStub.lua
+libs\AceLocale-3.0\AceLocale-3.0.xml
+
+locale\enUS.lua
 
 xanMortarPestle.lua
 itemDB.lua

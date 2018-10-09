@@ -1,5 +1,15 @@
 --A very special thanks to P3lim (Molinari) for the inspiration behind the AutoShine and Blightdavid for his work on Prospect Easy.
 
+local ADDON_NAME, addon = ...
+if not _G[ADDON_NAME] then
+	_G[ADDON_NAME] = CreateFrame("Frame", ADDON_NAME, UIParent)
+end
+addon = _G[ADDON_NAME]
+
+addon:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
+
+local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
+
 local spells = {}
 local setInCombat = 0
 local lastItem
@@ -11,7 +21,7 @@ local colors = {
     [1804] = {r=200/255, g=75/255, b=75/255},       --lock picking  (Thanks to kaisoul)
 }
 
-local debugf = tekDebug and tekDebug:GetFrame("xanMortarPestle")
+local debugf = tekDebug and tekDebug:GetFrame(ADDON_NAME)
 local function Debug(...)
     if debugf then debugf:AddMessage(string.join(", ", tostringall(...))) end
 end
@@ -114,9 +124,6 @@ end)
 	CORE
 --------------------------]]
 
-local frm = CreateFrame("frame", "xanMortarPestle_Frame", UIParent)
-frm:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
-
 local function processCheck(id, itemType, itemSubType, qual, link)
 	if not spells then return nil end
 
@@ -164,7 +171,7 @@ local TimerOnUpdate = function(self, time)
 	end
 end
 
-function frm:PLAYER_LOGIN()
+function addon:PLAYER_LOGIN()
 
 	--check for DB
 	if not XMP_DB then XMP_DB = {} end
@@ -253,6 +260,9 @@ function frm:PLAYER_LOGIN()
 		end
 	end)
 
+	local ver = GetAddOnMetadata(ADDON_NAME,"Version") or '1.0'
+	DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r [v|cFF20ff20%s|r] loaded.", ADDON_NAME, ver or "1.0"))
+
 	self:UnregisterEvent("PLAYER_LOGIN")
 	self.PLAYER_LOGIN = nil
 end
@@ -278,11 +288,11 @@ UIErrorsFrame:SetScript("OnEvent", function(self, event, msg, r, g, b, ...)
 			--check to see if it's already in the database, if it isn't then add it to the DE list.
 			if id and not XMP_DB[id] then
 				XMP_DB[id] = true
-				DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33xanMortarPestle|r: %s added to database. %s", lastItem, SPELL_FAILED_CANT_BE_DISENCHANTED))
+				DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33xanMortarPestle|r: "..L.DatabaseAdd, lastItem, SPELL_FAILED_CANT_BE_DISENCHANTED))
 			end
 		end
 	end
 	return originalOnEvent(self, event, msg, r, g, b, ...)
 end)
 
-if IsLoggedIn() then frm:PLAYER_LOGIN() else frm:RegisterEvent("PLAYER_LOGIN") end
+if IsLoggedIn() then addon:PLAYER_LOGIN() else addon:RegisterEvent("PLAYER_LOGIN") end

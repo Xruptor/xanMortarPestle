@@ -82,6 +82,15 @@ xMPDB.herbs = {
 	[124105] = true, -- Starlight Rose
 	[124106] = true, -- Felwort
 	[128304] = true, -- Yseralline Seed (I guess - these have a Mass Mill spell).
+	-- Battle for Azeroth
+	[151565] = true, -- Astral Glory
+	[152511] = true, -- Sea Stalk
+	[152509] = true, -- Siren's Pollen
+	[152508] = true, -- Winter's Kiss
+	[152507] = true, -- Akunda's Bite
+	[152506] = true, -- Star Moss
+	[152505] = true, -- Riverbud
+	[152510] = true, -- Anchor Weed
 }
 
 --[[------------------------
@@ -110,6 +119,11 @@ xMPDB.ore = {
 	-- Legion
 	[123918] = true, -- Leystone Ore
 	[123919] = true, -- Felslate
+	-- Battle for Azeroth
+	[151564] = true, -- Empyrium
+	[152579] = true, -- Storm Silver Ore
+	[152512] = true, -- Monelite Ore
+	[152513] = true, -- Platinum Ore
 }
 
 
@@ -134,6 +148,7 @@ xMPDB.lock = {
 	[6712] = true,
 	[12033] = true,
 	[13875] = true,
+	[13918] = true,
 	[16882] = true,
 	[16883] = true,
 	[16884] = true,
@@ -149,6 +164,7 @@ xMPDB.lock = {
 	[88165] = true, --vine-cracked junkbox (MOP)
 	[88567] = true, --ghost iron box
 	-- Warlords of Draenor
+	[106895] = true,
 	[116920] = true, -- True Steel Lockbox
 	-- Legion
 	[121331] = true, -- Leystone Lockbox
