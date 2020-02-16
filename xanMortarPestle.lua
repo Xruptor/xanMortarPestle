@@ -18,7 +18,8 @@ local colors = {
 	[51005] = {r=181/255, g=230/255, b=29/255},	--milling
 	[31252] = {r=1, g=127/255, b=138/255},  	--prospecting
 	[13262] = {r=128/255, g=128/255, b=1},   	--disenchant
-    [1804] = {r=200/255, g=75/255, b=75/255},       --lock picking  (Thanks to kaisoul)
+	[1804] = {r=200/255, g=75/255, b=75/255},   --lock picking  (Thanks to kaisoul)
+	[6991] = {r=200/255, g=75/255, b=75/255},   --hunter feed pet
 }
 
 local debugf = tekDebug and tekDebug:GetFrame(ADDON_NAME)
@@ -150,6 +151,11 @@ local function processCheck(id, itemType, itemSubType, qual, link)
 		end
 	end
 
+	--hunter feed pet food
+	if itemSubType == "Cooking" and spells[6991] and UnitExists("pet") and not UnitIsDead("pet") and UnitIsVisible("pet") then
+		return 6991
+	end
+
 	return nil
 end
 
@@ -194,6 +200,10 @@ function addon:PLAYER_LOGIN()
 	--lock picking (thanks to Kaisoul)
 	if(IsSpellKnown(1804)) then
 		spells[1804] = GetSpellInfo(1804)
+	end
+
+	if IsSpellKnown(6991) then
+		spells[6991] = GetSpellInfo(6991)
 	end
 
 	GameTooltip:HookScript('OnTooltipSetItem', function(self)
@@ -296,3 +306,4 @@ UIErrorsFrame:SetScript("OnEvent", function(self, event, msg, r, g, b, ...)
 end)
 
 if IsLoggedIn() then addon:PLAYER_LOGIN() else addon:RegisterEvent("PLAYER_LOGIN") end
+
