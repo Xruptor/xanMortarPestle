@@ -152,7 +152,7 @@ local function processCheck(id, itemType, itemSubType, qual, link)
 	end
 
 	--hunter feed pet food
-	if itemSubType == "Cooking" and spells[6991] and UnitExists("pet") and not UnitIsDead("pet") and UnitIsVisible("pet") then
+	if xMPDB.petFood[itemSubType] and spells[6991] and UnitExists("pet") and not UnitIsDead("pet") and UnitIsVisible("pet") then
 		return 6991
 	end
 
