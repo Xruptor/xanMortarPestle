@@ -172,3 +172,8 @@ xMPDB.lock = {
 	[121331] = true, -- Leystone Lockbox
 	[169475] = true, -- Barnacled Lockbox
 }
+
+xMPDB.petFood = {
+	["Cooking"] = true,
+	["Food & Drink"] = true
+}
