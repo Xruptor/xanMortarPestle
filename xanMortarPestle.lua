@@ -18,7 +18,8 @@ local colors = {
 	[51005] = {r=181/255, g=230/255, b=29/255},	--milling
 	[31252] = {r=1, g=127/255, b=138/255},  	--prospecting
 	[13262] = {r=128/255, g=128/255, b=1},   	--disenchant
-    [1804] = {r=200/255, g=75/255, b=75/255},       --lock picking  (Thanks to kaisoul)
+	[1804] = {r=200/255, g=75/255, b=75/255},   --lock picking  (Thanks to kaisoul)
+	[6991] = {r=200/255, g=75/255, b=75/255},   --hunter feed pet
 }
 
 local debugf = tekDebug and tekDebug:GetFrame(ADDON_NAME)
@@ -150,13 +151,35 @@ local function processCheck(id, itemType, itemSubType, qual, link)
 		end
 	end
 
+	--hunter feed pet food
+	if xMPDB.petFood[itemSubType] and canCastFeedPet() then
+		_, duration = GetSpellCooldown(6991)
+		if duration == 0 then return 6991 end
+	end
+
 	return nil
+end
+
+function canCastFeedPet(button) 
+	if not button then
+		return true
+	end
+	
+	if spells and spells[6991] and UnitExists("pet") and not UnitIsDead("pet")  and UnitIsVisible("pet") then
+		_, duration = GetSpellCooldown(6991)
+		if duration == 0 then 
+			return true
+		end
+	end
+
+	return false
 end
 
 --this update is JUST IN CASE the autoshine is still going even after the alt press is gone
 local TimerOnUpdate = function(self, time)
-
-	if self.active and not IsAltKeyDown() then
+	petFeedIsOnCD = self.active and self.spellID and not canCastFeedPet(self)
+	
+	if petFeedIsOnCD or (self.active and not IsAltKeyDown()) then
 		self.OnUpdateCounter = (self.OnUpdateCounter or 0) + time
 		if self.OnUpdateCounter < 0.5 then return end
 		self.OnUpdateCounter = 0
@@ -165,6 +188,7 @@ local TimerOnUpdate = function(self, time)
 		if self.tick >= 1 then
 			AutoCastShine_AutoCastStop(self)
 			self.active = false
+			self.spellID = nil
 			self.tick = 0
 			self:SetScript("OnUpdate", nil)
 		end
@@ -194,6 +218,10 @@ function addon:PLAYER_LOGIN()
 	--lock picking (thanks to Kaisoul)
 	if(IsSpellKnown(1804)) then
 		spells[1804] = GetSpellInfo(1804)
+	end
+
+	if IsSpellKnown(6991) then
+		spells[6991] = GetSpellInfo(6991)
 	end
 
 	GameTooltip:HookScript('OnTooltipSetItem', function(self)
@@ -243,6 +271,7 @@ function addon:PLAYER_LOGIN()
 				button:SetScript("OnUpdate", TimerOnUpdate)
 				button.tick = 0
 				button.active = true
+				button.spellID = spellID
 				button:SetAttribute('macrotext', string.format('/cast %s\n/use %s %s', spells[spellID], bag, slot))
 				button:SetAllPoints(owner)
 				button:SetAlpha(1)
@@ -251,6 +280,7 @@ function addon:PLAYER_LOGIN()
 				AutoCastShine_AutoCastStart(button, colors[spellID].r, colors[spellID].g, colors[spellID].b)
 			else
 				button:SetScript("OnUpdate", nil)
+				button.spellID = nil
 				button.tick = 0
 				button.active = false
 				button:ClearAllPoints()
@@ -296,3 +326,4 @@ UIErrorsFrame:SetScript("OnEvent", function(self, event, msg, r, g, b, ...)
 end)
 
 if IsLoggedIn() then addon:PLAYER_LOGIN() else addon:RegisterEvent("PLAYER_LOGIN") end
+
