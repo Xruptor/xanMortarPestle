@@ -28,17 +28,6 @@ local function Debug(...)
 end
 
 --[[------------------------
-	LOCALIZATION
---------------------------]]
-
-local locale = GetLocale()
-
-local L = setmetatable(locale == "deDE" and {
-	Weapon = "Waffe",
-} or {}, {__index=function(t,i) return i end})
-
-
---[[------------------------
 	CREATE BUTTON
 --------------------------]]
 
@@ -146,7 +135,7 @@ local function processCheck(id, itemType, itemSubType, qual, link)
 	--otherwise check disenchat
 	if itemType and qual and XMP_DB and spells[13262] then
 		--only allow if the type of item is a weapon or armor, and it's a specific quality
-		if (((itemType == ARMOR or itemType == L.Weapon) and IsEquippableItem(link)) or itemSubType == "Artifact Relic") and qual > 1 and qual < 5 and not XMP_DB[id] then
+		if (((itemType == ARMOR or itemType == WEAPON) and IsEquippableItem(link)) or itemSubType == L.ArtifactRelic) and qual > 1 and qual < 5 and not XMP_DB[id] then
 			return 13262
 		end
 	end
