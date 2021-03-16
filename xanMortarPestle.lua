@@ -6,8 +6,6 @@ if not _G[ADDON_NAME] then
 end
 addon = _G[ADDON_NAME]
 
-addon:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
-
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 local spells = {}
@@ -26,6 +24,28 @@ local debugf = tekDebug and tekDebug:GetFrame(ADDON_NAME)
 local function Debug(...)
     if debugf then debugf:AddMessage(string.join(", ", tostringall(...))) end
 end
+
+addon:RegisterEvent("ADDON_LOADED")
+addon:SetScript("OnEvent", function(self, event, ...)
+	if event == "ADDON_LOADED" or event == "PLAYER_LOGIN" then
+		if event == "ADDON_LOADED" then
+			local arg1 = ...
+			if arg1 and arg1 == ADDON_NAME then
+				self:UnregisterEvent("ADDON_LOADED")
+				self:RegisterEvent("PLAYER_LOGIN")
+			end
+			return
+		end
+		if IsLoggedIn() then
+			self:EnableAddon(event, ...)
+			self:UnregisterEvent("PLAYER_LOGIN")
+		end
+		return
+	end
+	if self[event] then
+		return self[event](self, event, ...)
+	end
+end)
 
 --[[------------------------
 	CREATE BUTTON
@@ -184,7 +204,7 @@ local TimerOnUpdate = function(self, time)
 	end
 end
 
-function addon:PLAYER_LOGIN()
+function addon:EnableAddon()
 
 	--check for DB
 	if not XMP_DB then XMP_DB = {} end
@@ -281,9 +301,6 @@ function addon:PLAYER_LOGIN()
 
 	local ver = GetAddOnMetadata(ADDON_NAME,"Version") or '1.0'
 	DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFF99CC33%s|r [v|cFF20ff20%s|r] loaded.", ADDON_NAME, ver or "1.0"))
-
-	self:UnregisterEvent("PLAYER_LOGIN")
-	self.PLAYER_LOGIN = nil
 end
 
 --instead of having a large array with all the possible non-disenchant items
@@ -313,6 +330,3 @@ UIErrorsFrame:SetScript("OnEvent", function(self, event, msg, r, g, b, ...)
 	end
 	return originalOnEvent(self, event, msg, r, g, b, ...)
 end)
-
-if IsLoggedIn() then addon:PLAYER_LOGIN() else addon:RegisterEvent("PLAYER_LOGIN") end
-
