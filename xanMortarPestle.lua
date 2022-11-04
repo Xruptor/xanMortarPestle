@@ -25,6 +25,17 @@ local function Debug(...)
     if debugf then debugf:AddMessage(string.join(", ", tostringall(...))) end
 end
 
+local WOW_PROJECT_ID = _G.WOW_PROJECT_ID
+local WOW_PROJECT_MAINLINE = _G.WOW_PROJECT_MAINLINE
+local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC
+--local WOW_PROJECT_BURNING_CRUSADE_CLASSIC = _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+local WOW_PROJECT_WRATH_CLASSIC = _G.WOW_PROJECT_WRATH_CLASSIC
+
+addon.IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+addon.IsClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+--BSYC.IsTBC_C = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+addon.IsWLK_C = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+
 addon:RegisterEvent("ADDON_LOADED")
 addon:SetScript("OnEvent", function(self, event, ...)
 	if event == "ADDON_LOADED" or event == "PLAYER_LOGIN" then
@@ -272,8 +283,8 @@ function addon:EnableAddon()
 			local spellID = processCheck(id, itemType, itemSubType, qual, link)
 
 			--check to show or hide the button
-			if spellID then
-
+			if spellID and spells[spellID] then
+			
 				--set the item for disenchant check
 				lastItem = link
 

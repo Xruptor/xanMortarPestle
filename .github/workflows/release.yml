@@ -39,3 +39,9 @@ jobs:
       # Package and release the retail version
       - name: Create Retail Package
         uses: BigWigsMods/packager@master
+
+      # Package and release the wrath version
+      - name: Create Wrath Package
+        uses: BigWigsMods/packager@master
+        with:
+          args: -g wrath
