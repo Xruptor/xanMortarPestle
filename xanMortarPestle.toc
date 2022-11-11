@@ -4,9 +4,10 @@
 ## Title: xanMortarPestle
 ## Notes: Mill/Prospect/Disenchant using (Alt + Right-Click) on an item.
 ## Author: Xruptor
-## Version: 4.4
+## Version: 4.5
 ## X-Curse-Project-ID: 28600
 ## X-WoWI-ID: 19059
+## X-Wago-ID: lQNlPDNe
 ## OptionalDeps: tekDebug
 ## SavedVariables: XMP_DB
 
