@@ -101,7 +101,20 @@ xMPDB.herbs = {
 	[168589] = true, -- Marrowroot (Maldraxxus)
 	[169701] = true, -- Death Blossom
 	[170554] = true, -- Vigil's Touch (Ardenweald)
-	[171315] = true -- Nightshade
+	[171315] = true, -- Nightshade
+	-- Dragonflight
+	[191460] = true, -- Hochenblume Rank 1
+	[191461] = true, -- Hochenblume Rank 2
+	[191462] = true, -- Hochenblume Rank 3
+	[191464] = true, -- Saxifrage Rank 1
+	[191465] = true, -- Saxifrage Rank 2
+	[191466] = true, -- Saxifrage Rank 3
+	[191467] = true, -- Bubble Poppy Rank 1
+	[191468] = true, -- Bubble Poppy Rank 2
+	[191469] = true, -- Bubble Poppy Rank 3
+	[191470] = true, -- Writhebark Rank 1
+	[191471] = true, -- Writhebark Rank 2
+	[191472] = true -- Writhebark Rank 3
 }
 
 --[[------------------------
@@ -145,7 +158,18 @@ xMPDB.ore = {
 	[171830] = true, -- Oxxein Ore (Maldraxxus)
 	[171831] = true, -- Phaedrum Ore (Ardenweald)
 	[171832] = true, -- Sinvyr Ore (Revendreth)
-	[171833] = true -- Elethium Ore
+	[171833] = true, -- Elethium Ore
+	-- Dragonflight
+	[190394] = true, -- Serevite Ore Rank 3
+	[190395] = true, -- Serevite Ore Rank 2
+	[190396] = true, -- Serevite Ore Rank 1
+	[189143] = true, -- Draconium Ore Rank 1
+	[188658] = true, -- Draconium Ore Rank 2
+	[190311] = true, -- Draconium Ore Rank 3
+	[190312] = true, -- Khaz'gorite Ore Rank 1
+	[190313] = true, -- Khaz'gorite Ore Rank 2
+	[190314] = true, -- Khaz'gorite Ore Rank 3
+	[194545] = true -- Prismatic Ore
 }
 
 
@@ -197,11 +221,14 @@ xMPDB.lock = {
 	-- Battle for Azeroth
 	[169475] = true, -- Barnacled Lockbox (8.2 Nazjatar)
 	-- Shadowlands
-	[179311] = true, -- Oxxein Lockbox (Maldraxxus)
+	[179311] = true, -- Synvir Lockbox (Revendreth)
 	[180522] = true, -- Phaedrum Lockbox (Ardenweald)
-	[180532] = true, -- Laestrite Lockbox
-	[180533] = true -- Solenium Lockbox (Bastion)
-	-- This is where I'd put my Sinvyr Lockbox (Revendreth), IF I HAD ONE!
+	[180532] = true, -- Oxxein Lockbox (Maldraxxus)
+	[180533] = true, -- Solenium Lockbox (Bastion)
+	[186161] = true, -- Stygian Lockbox
+	-- Dragonflight
+	[190954] = true, -- Serevite Lockbox
+	[191296] = true -- Enchanted Lockbox 
 }
 
 xMPDB.petFood = {
